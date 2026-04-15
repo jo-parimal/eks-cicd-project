@@ -11,7 +11,6 @@ provider "aws" {
   region = var.region
 }
 
-
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.0.0"
@@ -47,12 +46,27 @@ module "eks" {
   version = "20.0.0"
 
   cluster_name    = var.cluster_name
-  cluster_version = "1.29"
+  cluster_version = "1.31"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
   cluster_endpoint_public_access = true
+
+  access_entries = {
+    admin = {
+      principal_arn = "arn:aws:iam::956959393819:role/FullAccess"
+
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+  }
 
   eks_managed_node_groups = {
     default = {
@@ -65,8 +79,6 @@ module "eks" {
       labels = {
         env = "dev"
       }
-
-     
     }
   }
 
