@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eks-cicd-app
+  labels:
+    app: eks-cicd-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eks-cicd-app
+  template:
+    metadata:
+      labels:
+        app: eks-cicd-app
+    spec:
+      nodeSelector:
+        env: dev
+      containers:
+      - name: eks-cicd-container
+        image: 956959393819.dkr.ecr.ap-south-2.amazonaws.com/eks-cicd:IMAGE_TAG
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
